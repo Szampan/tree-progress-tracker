@@ -1,0 +1,13 @@
+{% extends "trees/base.html" %}
+{% block page_header %}
+    <div>
+        <h1>{{ entry.date_photos_taken }}</h1>
+    </div>
+        
+    {% endblock page_header %}  
+
+{% block content %}
+    <div>
+        {{ entry }}
+    </div>
+{% endblock content %}

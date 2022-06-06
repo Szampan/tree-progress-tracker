@@ -1,0 +1,14 @@
+{% extends "trees/base.html" %}
+{% block content %}
+    {% if form.errors %}
+        <p>Your username and password didn't match</p>
+    {% endif %}    
+
+    <form action="{% url 'users:login' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary">Login</button>
+        <input type="hidden" name="next" value="{% url 'trees:index' %}">
+    </form>
+{% endblock content %}

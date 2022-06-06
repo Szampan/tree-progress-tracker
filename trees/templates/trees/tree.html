@@ -1,0 +1,28 @@
+{% extends "trees/base.html" %}
+{% block page_header %}
+    <div>
+        <h1>{{ tree_name }}</h1>
+    </div>
+        
+    {% endblock page_header %}  
+
+{% block content %}
+    <div>
+        <ul>
+            {% for entry in tree_entries %}
+                <li>
+                    <a href="{% url 'trees:entry' entry.pk %}">
+                        <h4>{{ entry }}</h4>
+                        
+                        <!-- {% if tree.image %}
+                            <img src="{{ tree.image.url }}" alt="{{ tree.name }}" width="200" zheight="200">
+                            {% endif %} -->
+                        
+                    </a>
+                    <p>id: {{ entry.id }}</p>
+                    <p>name: {{ entry.tree }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock content %}

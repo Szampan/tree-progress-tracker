@@ -1,0 +1,27 @@
+{% extends "trees/base.html" %}
+{% block page_header %} <!-- # tag with "content" name -->
+    <div class="jumbotron">
+        <h1>Track your progression.</h1>
+        <p>If you want to know the future, look at the past.</p>
+    </div>
+        
+    {% endblock page_header %}  
+
+{% block content %}
+    <div>
+        <p>Here will be a list with thumbnails of all trees of all users (which contain main image)</p>
+        <ul>
+            {% for tree in trees %}
+                <li>
+                    <a href="{% url 'trees:tree' tree.pk %}">
+                        <h4>{{ tree.name }}</h4>
+                        {% if tree.image %}
+                            <img src="{{ tree.image.url }}" alt="{{ tree.name }}" width="200" zheight="200">
+                        {% endif %}
+
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock content %}
