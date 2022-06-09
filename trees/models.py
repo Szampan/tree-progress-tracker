@@ -1,4 +1,5 @@
 # from tokenize import blank_re
+from email.policy import default
 import uuid
 import pathlib
 
@@ -6,14 +7,17 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 
-def user_directory_path(instance, filename):                  # do usunięcia
+def user_directory_path(instance, filename):                  # do usunięcia albo przerobienia
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return f'images/user_{instance.entry.tree.owner.id}/{filename}'
 
-def tree_images_upload_handler(instance, filename):
+def tree_images_upload_handler(instance, filename):             # later: make it better
     fpath = pathlib.Path(filename)
     new_fname = str(uuid.uuid1())   # uuid1 -> uuid + timestamp
     return f'images/user_{instance.owner.id}/{new_fname}{fpath.suffix}'
+
+def album_path_handler(instance, filename):
+    return f'images/album_{instance.album.id}/{filename}'
 
 
 class Tree(models.Model):
@@ -35,9 +39,25 @@ class Tree(models.Model):
     def __str__(self):
         return self.name
     
+class ImageAlbum(models.Model):
+    def default(self):
+        return self.images.filter(default=True).first()
+
+    def show_images(self):
+        return self.images.all()
+    
+    # def thumbnails(self):
+    #     return self.images.filter(width__lt=100, length_lt=100)
+
+class Image(models.Model):
+    album = models.ForeignKey(ImageAlbum, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to=album_path_handler, blank=True)
+    default = models.BooleanField(default=False)    
+
 
 class Entry(models.Model):
     tree = models.ForeignKey(Tree, on_delete=models.CASCADE)
+    album = models.OneToOneField(ImageAlbum, on_delete=models.CASCADE, related_name='entry', blank=True, null=True)
     # owner = models.ForeignKey(User, on_delete=models.CASCADE)   # settings.AUTH_USER_MODEL instead of User?
     date_added = models.DateTimeField(auto_now_add=True)
     date_photos_taken = models.DateField(blank=True)
@@ -55,10 +75,14 @@ class Entry(models.Model):
 #     # slug = slugify()
 #     return f"post_images/{filename}"
 
-class Images(models.Model):
+class Images(models.Model):     # later: delete. Image is new model instead of Images.    
     entry = models.ForeignKey(Entry, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=user_directory_path, blank=True, verbose_name='Image test')  #null=True ?
+    default = models.BooleanField(default=False)    
+    # default_for_tree = models.BooleanField(default=False)  # Later ?
 
     class Meta:
-        verbose_name_plural = 'images'
+        verbose_name_plural = 'imagessss'
+
+
 

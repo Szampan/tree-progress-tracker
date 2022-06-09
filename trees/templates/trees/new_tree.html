@@ -1,0 +1,18 @@
+{% extends "trees/base.html" %}
+{% block page_header %}
+    <div>
+        <h1>New tree form</h1>
+    </div>
+        
+    {% endblock page_header %}  
+
+{% block content %}
+    <div>
+        <form action="{% url 'trees:new_tree' %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button name="add">Add tree</button>
+        </form>
+
+    </div>
+{% endblock content %}

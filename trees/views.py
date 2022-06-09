@@ -3,8 +3,10 @@ from django.shortcuts import render
 from trees.forms import EntryFullForm
 ##
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 ##
@@ -15,6 +17,7 @@ from django.http import HttpResponseRedirect
 # from .forms import TreeForm, EntryForm, ImageForm
 ##
 from .models import Tree, Entry, Images
+from .forms import TreeForm
 
 class Index(ListView):
     model = Tree
@@ -37,6 +40,22 @@ class Index(ListView):
         qs = qs.order_by('-date_added')
         return qs
         
+
+class UserTrees(ListView):
+    model = Tree
+    template_name = 'trees/user_trees.html'
+    context_object_name = 'user_trees'
+    def get_queryset(self, *args, **kwargs):
+        qs = super(UserTrees, self).get_queryset(*args, **kwargs)
+        qs = qs.filter(owner_id=self.kwargs['pk'])
+        # qs = qs.filter(user=self.request.user)
+        return qs
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['owner_id'] = self.kwargs['pk']
+        context['owner_name'] = User.objects.get(pk=self.kwargs['pk'])
+        return context
+
 
 class AllEntries(ListView):
     model = Entry
@@ -63,6 +82,13 @@ class EntryView(DetailView):
     model = Entry
     template_name = 'trees/entry.html'
     context_object_name = 'entry'
+
+
+class NewTree(FormView):
+    form_class = TreeForm
+    template_name = 'trees/new_tree.html'
+    success_url = reverse_lazy('trees:index')
+
 
 
 

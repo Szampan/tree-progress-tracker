@@ -13,12 +13,16 @@
                 <li>
                     <a href="{% url 'trees:entry' entry.pk %}">
                         <h4>{{ entry }}</h4>
+                        {% if entry.album.default %}
+                            <img src="{{ entry.album.default.image.url }}" alt="{{ entry.album.default.image.name }}" width="200" zheight="200">
+                        {% endif %}
                         
                         <!-- {% if tree.image %}
                             <img src="{{ tree.image.url }}" alt="{{ tree.name }}" width="200" zheight="200">
                             {% endif %} -->
-                        
+                            
                     </a>
+                    {# <!-- <p>{% url 'trees:entry' album.pk %} </p> --> #}
                     <p>id: {{ entry.id }}</p>
                     <p>name: {{ entry.tree }}</p>
                 </li>

@@ -1,20 +1,15 @@
 {% extends "trees/base.html" %}
-{% block page_header %} <!-- # tag with "content" name -->
-    <div class="jumbotron">
-        <h1>Track your progression.</h1>
-        <p>If you want to know the future, look at the past.</p>
+{% block page_header %}
+    <div>
+        <h1>Trees added by  {{ owner_name }} (user id: {{ owner_id }})</h1>
     </div>
         
     {% endblock page_header %}  
 
 {% block content %}
     <div>
-        <p>Here will be a list with thumbnails of all trees of all users (which contain main image)</p>
-        <a href="{% url 'trees:new_tree' %}">
-            Add tree
-        </a>
         <ul>
-            {% for tree in trees %}
+            {% for tree in user_trees %}
                 <li>
                     <a href="{% url 'trees:tree' tree.pk %}">
                         <h4>{{ tree.name }}</h4>
@@ -26,5 +21,6 @@
                 </li>
             {% endfor %}
         </ul>
+
     </div>
 {% endblock content %}

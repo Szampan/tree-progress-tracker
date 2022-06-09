@@ -9,5 +9,24 @@
 {% block content %}
     <div>
         {{ entry }}
+        <p>
+            album: {{ entry.album }}
+        </p>
+        <p>default photo: {{ entry.album.default.image }}    </p>
+        <img src="{{ entry.album.default.image.url }}" alt="">
+        <div>
+            <p>Iterowanie po zawartości albumu przypisanego do entry. Album musi to jakoś umożliwiać. Znaleźć wbudowaną funkcję</p>
+            <ul>
+                {% for photo in entry.album.show_images %}
+                    <li>
+                        <a href="{{ photo.image.url }}">
+                            <img src="{{ photo.image.url }}" alt="{{ photo.image.name }}" width="200" zheight="200">
+                        </a>
+                        <p>{{ photo.image }}</p>
+                        <p>{{ photo.image.url }}</p>
+                    </li>
+                {% endfor %}
+        </div>
+
     </div>
 {% endblock content %}
