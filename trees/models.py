@@ -39,7 +39,7 @@ class Tree(models.Model):
     def __str__(self):
         return self.name
     
-class ImageAlbum(models.Model):
+class ImageAlbum(models.Model):     #ImageAlbom powinien być przypięty do Entry a nie odwrotnie?
     def default(self):
         return self.images.filter(default=True).first()
 
@@ -60,15 +60,22 @@ class Entry(models.Model):
     album = models.OneToOneField(ImageAlbum, on_delete=models.CASCADE, related_name='entry', blank=True, null=True)
     # owner = models.ForeignKey(User, on_delete=models.CASCADE)   # settings.AUTH_USER_MODEL instead of User?
     date_added = models.DateTimeField(auto_now_add=True)
-    date_photos_taken = models.DateField(blank=True)
-    comment = models.TextField(max_length=1000, blank=True)
+    date_photos_taken = models.DateField()
+    comment = models.TextField(max_length=1000, blank=True, null=True)
     # image = models.ImageField(upload_to=tree_images_upload_handler, blank=True)
     
     class Meta:
         verbose_name_plural = 'entries'
 
     def __str__(self):
-        return f'{self.tree.name}: ' + str(self.date_photos_taken.strftime('%Y-%m-%d'))
+        date = str(self.date_photos_taken.strftime('%Y-%m-%d')) if self.date_photos_taken else ''
+        return f'{self.tree.name}: ' + date
+
+    def save(self, *args, **kwargs):
+        if not self.album:
+            self.album = ImageAlbum.objects.create()
+        super().save(*args, **kwargs)
+
 
 
 # def get_image_filename(filename):   

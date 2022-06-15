@@ -9,10 +9,13 @@ urlpatterns = [
     path('', views.Index.as_view(), name='index'),      # Class-based view
     path('all_entries/', views.AllEntries.as_view(), name='all_entries'),             
     path('entry/<int:pk>/', views.EntryView.as_view(), name='entry'),             
-    path('tree/<int:pk>/', views.TreeView.as_view(), name='tree'),   
     path('new_tree/', views.NewTree.as_view(), name='new_tree'),
     # path('user_trees/<', views.UserTrees.as_view(), name='user_trees'),
     path('user_trees/<int:pk>/', views.UserTrees.as_view(), name='user_trees'),
+    path('new_entry/', views.NewEntry.as_view(), name='new_entry'),
+
+    path('tree/<int:pk>/', views.TreeView.as_view(), name='tree'),  # old
+    # path('tree/<int:pk>/', views.TreeDislpayEntries.as_view(), name='tree'),   # new
 
     # path('tree/<int:tree_id>/', views.tree, name='tree'),
     # path('new_entry/', views.new_entry, name='new_entry'),

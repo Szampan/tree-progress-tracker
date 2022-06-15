@@ -1,18 +1,23 @@
 {% extends "trees/base.html" %}
 {% block page_header %}
     <div>
-        <h1>New tree form</h1>
+        <!-- <h1>OLD. DELETE IT</h1> -->
+        <h2>New entry for tree named ... </h2>
+        {{ request }}
+        {% for i in request %}
+            <p>{{ i }}</p>
+        {% endfor %}
     </div>
         
     {% endblock page_header %}  
 
 {% block content %}
     <div>
-        <form action="{% url 'trees:new_tree' %}" method="post">
+        <form action="{% url 'trees:new_entry' %}" method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <!-- <input type="submit" value="Create tree"> -->
-            <button name="submit">Add tree</button>
+            <button name="submit">Submit</button>
         </form>
 
     </div>

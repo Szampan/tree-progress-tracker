@@ -15,15 +15,15 @@
         </a>
         <ul>
             {% for tree in trees %}
-                <li>
-                    <a href="{% url 'trees:tree' tree.pk %}">
+                {% if tree.image %}
+                    <li>
+                        <a href="{% url 'trees:tree' tree.pk %}">
                         <h4>{{ tree.name }}</h4>
-                        {% if tree.image %}
                             <img src="{{ tree.image.url }}" alt="{{ tree.name }}" width="200" zheight="200">
-                        {% endif %}
-                    </a>
-                    <p><a href="{% url 'trees:user_trees' tree.owner.pk %}">{{ tree.owner }}</a></p>
-                </li>
+                        </a>
+                        <p><a href="{% url 'trees:user_trees' tree.owner.pk %}">{{ tree.owner }}</a></p>
+                    </li>
+                {% endif %}
             {% endfor %}
         </ul>
     </div>

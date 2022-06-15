@@ -1,13 +1,13 @@
 from django.shortcuts import render
 
-from trees.forms import EntryFullForm
 ##
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
+from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import FormView
-from django.urls import reverse_lazy
+from django.views import View
+from django.urls import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 ##
 # from django.forms import modelformset_factory
@@ -17,7 +17,7 @@ from django.http import HttpResponseRedirect
 # from .forms import TreeForm, EntryForm, ImageForm
 ##
 from .models import Tree, Entry, Images
-from .forms import TreeForm
+from .forms import TreeForm, EntryForm, FullEntryForm
 
 class Index(ListView):
     model = Tree
@@ -45,11 +45,13 @@ class UserTrees(ListView):
     model = Tree
     template_name = 'trees/user_trees.html'
     context_object_name = 'user_trees'
+
     def get_queryset(self, *args, **kwargs):
         qs = super(UserTrees, self).get_queryset(*args, **kwargs)
         qs = qs.filter(owner_id=self.kwargs['pk'])
         # qs = qs.filter(user=self.request.user)
         return qs
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['owner_id'] = self.kwargs['pk']
@@ -62,20 +64,83 @@ class AllEntries(ListView):
     template_name = 'trees/all_entries.html'
     context_object_name = 'all_entries'   
 
-class TreeView(ListView):
+
+
+
+class TreeDislpayEntries(ListView):
     model = Entry
     template_name = 'trees/tree.html'
     context_object_name = 'tree_entries'
-    # paginate_by = 10
+    
     def get_queryset(self, *args, **kwargs):
         # return Tree.objects.filter(tree_id=self.kwargs['pk'])
-        qs = super(TreeView, self).get_queryset(*args, **kwargs)
+        qs = super().get_queryset(*args, **kwargs)
         qs = qs.filter(tree_id=self.kwargs['pk'])
+        qs = qs.order_by('-date_photos_taken')
         return qs
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['tree_name'] = Tree.objects.get(pk=self.kwargs['pk'])
+        context['tree_name'] = Tree.objects.get(pk=self.kwargs['pk'])   # zamiast tego można coś w stylu post.title w templacie
+        # context['form'] = EntryForm()   # Old
+        context['form'] = FullEntryForm()   # New
         return context
+
+
+class TreeAddEntry(SingleObjectMixin, FormView):
+    model = Tree
+    # form_class = EntryForm  # Old
+    form_class = FullEntryForm  # New
+    template_name = 'trees/tree.html'
+
+    # problem: jeśli invalid, to wyświetla template ale bez entries
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    def form_valid(self, form):
+        entry = form.save(commit=False)
+        entry.tree = self.get_object()      # nie było ()
+        # entry.album = self.request.user.album   #???
+        entry.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        tree = self.get_object()
+        return reverse('trees:tree', kwargs={'pk': tree.pk})
+
+
+class TreeView(View):
+
+    def get(self, request, *args, **kwargs):
+        view = TreeDislpayEntries.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = TreeAddEntry.as_view()
+        return view(request, *args, **kwargs)
+
+
+# class TreeView(ListView):   # OLD
+#     model = Entry
+#     template_name = 'trees/tree.html'
+#     context_object_name = 'tree_entries'
+#     # paginate_by = 10
+#     def get_queryset(self, *args, **kwargs):
+#         # return Tree.objects.filter(tree_id=self.kwargs['pk'])
+#         qs = super(TreeView, self).get_queryset(*args, **kwargs)
+#         qs = qs.filter(tree_id=self.kwargs['pk'])
+#         return qs
+#     def get_context_data(self, *args, **kwargs):
+#         context = super().get_context_data(*args, **kwargs)
+#         context['tree_name'] = Tree.objects.get(pk=self.kwargs['pk'])   # zamiast tego można coś w stylu post.title w templacie
+#         return context
 
 
 class EntryView(DetailView):
@@ -89,6 +154,78 @@ class NewTree(FormView):
     template_name = 'trees/new_tree.html'
     success_url = reverse_lazy('trees:index')
 
+    def form_valid(self, form):
+        new_tree = form.save(commit=False)
+        new_tree.owner = self.request.user
+        new_tree.save()
+
+        return super().form_valid(form)
+
+class NewEntry(FormView):   # OLD
+
+    """
+    New entry related to a tree (tree_id)
+    """
+    form_class = EntryForm
+    template_name = 'trees/new_entry.html'
+    success_url = reverse_lazy('trees:index')
+
+    # get the tree_id from the url
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # kwargs['tree_id'] = self.kwargs['pk']
+        return kwargs
+
+    
+
+    def form_valid(self, form):
+        new_entry = form.save(commit=False)
+        new_entry.owner = self.request.user
+        new_entry.tree = Tree.objects.get(pk=self.kwargs['pk'])     # How to get the tree_id from the url?
+        new_entry.save()
+
+        return super().form_valid(form)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        # context['tree_id'] = self.kwargs['pk']
+        return context
+
+    
+    
+
+    
+
+    
+
+
+    # # form_class = FullEntryForm
+    # form_class = EntryForm
+    # # model = Entry
+    # template_name = 'trees/new_entry.html'
+    # success_url = reverse_lazy('trees:index')
+
+    # def form_valid(self, form):
+    #     new_entry = form.save(commit=False)
+    #     # new_entry.tree = self.request.tree    # tree_id pobrać skądś
+    #     new_entry.save()
+
+    #     return super().form_valid(form)
+    
+    # def get_context_data(self, *args, **kwargs):
+    #     context = super().get_context_data(*args, **kwargs)
+    #     # # context['tree_name'] = Tree.objects.get(pk=self.kwargs['pk'])
+    #     # context['owner_id'] = self.kwargs['pk']
+    #     # context['owner_name'] = User.objects.get(pk=self.kwargs['pk'])
+    #     # context['datas'] = self.request
+    #     return context
+
+
+
+    # def get_context_data(self, *args, **kwargs):
+    #     context = super().get_context_data(*args, **kwargs)
+    #     context['tree_id'] = self.kwargs['pk']
+    #     return context
 
 
 

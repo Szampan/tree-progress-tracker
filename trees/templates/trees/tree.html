@@ -1,13 +1,25 @@
 {% extends "trees/base.html" %}
 {% block page_header %}
     <div>
-        <h1>{{ tree_name }}</h1>
+        <h1>{{ tree_name }} </h1>
     </div>
         
     {% endblock page_header %}  
 
 {% block content %}
     <div>
+        <p>TREE DETAILS HERE</p>
+        <hr>
+        <!-- <a href="{% url 'trees:new_entry' %}">(DELETE IT) Add new photos!</a> -->
+        <p>FORM HERE (with date of photo)</p>
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button name="submit">Submit</button>
+        </form>
+        
+        <hr>
+        <h3>Photos / entries / updates / checkpoints / milestones...:</h3>
         <ul>
             {% for entry in tree_entries %}
                 <li>
@@ -23,8 +35,12 @@
                             
                     </a>
                     {# <!-- <p>{% url 'trees:entry' album.pk %} </p> --> #}
-                    <p>id: {{ entry.id }}</p>
-                    <p>name: {{ entry.tree }}</p>
+                    <p class="lead">comment: {{ entry.comment }}</p>
+                    <small  class="text-muted">
+                        <p>entry id: {{ entry.id }}</p>
+                        <p>name: {{ entry.tree }}</p>
+                        <p>album: {{ entry.album }}</p>
+                    </small>
                 </li>
             {% endfor %}
         </ul>
