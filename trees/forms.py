@@ -23,6 +23,7 @@ class EntryForm(forms.ModelForm):
 
 
 class FullEntryForm(EntryForm):
+    pass
     # Jeśli wyskakuje błąd, to może być kwestia braku zdefiniowania odpowiedniego albumu
     # ImageForm zamiast fileField?
     images = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
@@ -31,16 +32,20 @@ class FullEntryForm(EntryForm):
         # model = ImageAlbum   # tego nie było / old
         model = Image   # new
         fields = EntryForm.Meta.fields + ['images',]
+
+
+
+
     #     # fields = ['images']
 
     # Save all images to the album
-    def save(self, commit=True, *args, **kwargs):
-        album = super().save(commit=False)
-        album.user = self.request.user
-        album.save()
-        for image in self.cleaned_data['images']:
-            album.images.create(image=image)
-        return album
+    # def save(self, commit=True, *args, **kwargs):
+    #     album = super().save(commit=False)
+    #     album.user = self.request.user
+    #     album.save()
+    #     for image in self.cleaned_data['images']:
+    #         album.images.create(image=image)
+    #     return album
 
 
     

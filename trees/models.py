@@ -7,6 +7,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 
+from tools import *
+
 def user_directory_path(instance, filename):                  # do usunięcia albo przerobienia
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return f'images/user_{instance.entry.tree.owner.id}/{filename}'
@@ -64,6 +66,7 @@ class Entry(models.Model):
     comment = models.TextField(max_length=1000, blank=True, null=True)
     # image = models.ImageField(upload_to=tree_images_upload_handler, blank=True)
     
+
     class Meta:
         verbose_name_plural = 'entries'
 
@@ -74,6 +77,9 @@ class Entry(models.Model):
     def save(self, *args, **kwargs):
         if not self.album:
             self.album = ImageAlbum.objects.create()
+
+            lol('◘◘◘ Entry album:')
+            lol(self.album)
         super().save(*args, **kwargs)
 
 
@@ -89,7 +95,7 @@ class Images(models.Model):     # later: delete. Image is new model instead of I
     # default_for_tree = models.BooleanField(default=False)  # Later ?
 
     class Meta:
-        verbose_name_plural = 'imagessss'
+        verbose_name_plural = 'imagessss_old'
 
 
 

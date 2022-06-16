@@ -16,8 +16,10 @@ from django.http import HttpResponseRedirect
 # from django.http import HttpResponseRedirect
 # from .forms import TreeForm, EntryForm, ImageForm
 ##
-from .models import Tree, Entry, Images
+from .models import Tree, Entry, Images, Image
 from .forms import TreeForm, EntryForm, FullEntryForm
+
+from tools import *
 
 class Index(ListView):
     model = Tree
@@ -65,18 +67,17 @@ class AllEntries(ListView):
     context_object_name = 'all_entries'   
 
 
-
-
 class TreeDislpayEntries(ListView):
     model = Entry
     template_name = 'trees/tree.html'
     context_object_name = 'tree_entries'
     
     def get_queryset(self, *args, **kwargs):
+        lol('▬▬▬ GET QUERYSET ▬▬▬')
         # return Tree.objects.filter(tree_id=self.kwargs['pk'])
         qs = super().get_queryset(*args, **kwargs)
         qs = qs.filter(tree_id=self.kwargs['pk'])
-        qs = qs.order_by('-date_photos_taken')
+        qs = qs.order_by('-date_photos_taken', '-album_id')
         return qs
 
     def get_context_data(self, *args, **kwargs):
@@ -86,29 +87,48 @@ class TreeDislpayEntries(ListView):
         context['form'] = FullEntryForm()   # New
         return context
 
-
 class TreeAddEntry(SingleObjectMixin, FormView):
     model = Tree
-    # form_class = EntryForm  # Old
-    form_class = FullEntryForm  # New
+    form_class = EntryForm  # Old
+    # form_class = FullEntryForm  # New; z tym nie działa - komunikat, "field is required" (mimo że wybrano)
     template_name = 'trees/tree.html'
 
     # problem: jeśli invalid, to wyświetla template ale bez entries
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        self.object = self.get_object()     # Tree object
+        lol('▬▬▬ POST')
+        lol('▬▬▬ request.POST:')
+        lol(request.POST)
+        lol('request.POST.getlist("images"):')
+        lol(request.POST.getlist('images'))
         return super().post(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['request'] = self.request
+        lol('▬▬▬ kwargs["request"]:')
+        lol(kwargs['request'])
         return kwargs
 
-    def form_valid(self, form):
+    def form_valid(self, form): 
+        # utworzyć obiekt ImageAlbum wykorzystać go do tworzenia entry i images
+
+        lol('▬▬▬ FORM VALID')
         entry = form.save(commit=False)
-        entry.tree = self.get_object()      # nie było ()
+        # entry.tree = self.get_object()      # nie było ()
+        entry.tree = self.object      # nie było ()
         # entry.album = self.request.user.album   #???
+        # files = self.request.FILES.getlist('images')
+        lol('▬▬▬ entry:')
+        lol(entry.__dict__)
         entry.save()
+
+        files = self.request.POST.getlist('images')
+        lol('▬▬▬ files:')
+        lol(files)
+        # for file in files:
+        #     Image.objects.create(album=entry.album, image=file)
         return super().form_valid(form)
 
     def get_success_url(self):

@@ -1,0 +1,13 @@
+
+notes.txt
+temp/
+venv/
+*/__pycache__/
+*/migrations/
+__pycache__/
+
+
+static/
+media/
+user_1/
+db.sqlite3
