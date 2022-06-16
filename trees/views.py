@@ -1,3 +1,5 @@
+from email.policy import default
+from urllib import request
 from django.shortcuts import render
 
 ##
@@ -16,7 +18,7 @@ from django.http import HttpResponseRedirect
 # from django.http import HttpResponseRedirect
 # from .forms import TreeForm, EntryForm, ImageForm
 ##
-from .models import Tree, Entry, Images, Image
+from .models import Tree, Entry, Images, Image, ImageAlbum
 from .forms import TreeForm, EntryForm, FullEntryForm
 
 from tools import *
@@ -73,7 +75,7 @@ class TreeDislpayEntries(ListView):
     context_object_name = 'tree_entries'
     
     def get_queryset(self, *args, **kwargs):
-        lol('▬▬▬ GET QUERYSET ▬▬▬')
+        # lol('▬▬▬ GET QUERYSET ▬▬▬')
         # return Tree.objects.filter(tree_id=self.kwargs['pk'])
         qs = super().get_queryset(*args, **kwargs)
         qs = qs.filter(tree_id=self.kwargs['pk'])
@@ -97,38 +99,25 @@ class TreeAddEntry(SingleObjectMixin, FormView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()     # Tree object
-        lol('▬▬▬ POST')
-        lol('▬▬▬ request.POST:')
-        lol(request.POST)
-        lol('request.POST.getlist("images"):')
-        lol(request.POST.getlist('images'))
         return super().post(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['request'] = self.request
-        lol('▬▬▬ kwargs["request"]:')
-        lol(kwargs['request'])
         return kwargs
 
     def form_valid(self, form): 
-        # utworzyć obiekt ImageAlbum wykorzystać go do tworzenia entry i images
-
-        lol('▬▬▬ FORM VALID')
         entry = form.save(commit=False)
-        # entry.tree = self.get_object()      # nie było ()
-        entry.tree = self.object      # nie było ()
-        # entry.album = self.request.user.album   #???
-        # files = self.request.FILES.getlist('images')
-        lol('▬▬▬ entry:')
-        lol(entry.__dict__)
+        entry.album = ImageAlbum.objects.create()
+        entry.tree = self.object
+        # lol(entry.__dict__)
         entry.save()
 
-        files = self.request.POST.getlist('images')
-        lol('▬▬▬ files:')
-        lol(files)
-        # for file in files:
-        #     Image.objects.create(album=entry.album, image=file)
+        files = self.request.FILES.getlist('images')
+        default = True
+        for file in files:
+            Image.objects.create(album=entry.album, image=file, default=default)
+            default = False
         return super().form_valid(form)
 
     def get_success_url(self):

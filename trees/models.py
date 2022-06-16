@@ -74,13 +74,13 @@ class Entry(models.Model):
         date = str(self.date_photos_taken.strftime('%Y-%m-%d')) if self.date_photos_taken else ''
         return f'{self.tree.name}: ' + date
 
-    def save(self, *args, **kwargs):
-        if not self.album:
-            self.album = ImageAlbum.objects.create()
+    # def save(self, *args, **kwargs):
+    #     if not self.album:
+    #         self.album = ImageAlbum.objects.create()
 
-            lol('◘◘◘ Entry album:')
-            lol(self.album)
-        super().save(*args, **kwargs)
+    #         lol('◘◘◘ Entry album:')
+    #         lol(self.album)
+    #     super().save(*args, **kwargs)
 
 
 

@@ -12,7 +12,7 @@
         <hr>
         <!-- <a href="{% url 'trees:new_entry' %}">(DELETE IT) Add new photos!</a> -->
         <p>FORM HERE (with date of photo)</p>
-        <form action="" method="post">
+        <form action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
             <button name="submit">Submit</button>
