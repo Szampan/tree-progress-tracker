@@ -18,7 +18,7 @@ from django.http import HttpResponseRedirect
 # from django.http import HttpResponseRedirect
 # from .forms import TreeForm, EntryForm, ImageForm
 ##
-from .models import Tree, Entry, Images, Image, ImageAlbum
+from .models import Tree, Entry, Image, ImageAlbum
 from .forms import TreeForm, EntryForm, FullEntryForm
 
 from tools import *
@@ -76,7 +76,6 @@ class TreeDislpayEntries(ListView):
     
     def get_queryset(self, *args, **kwargs):
         # lol('▬▬▬ GET QUERYSET ▬▬▬')
-        # return Tree.objects.filter(tree_id=self.kwargs['pk'])
         qs = super().get_queryset(*args, **kwargs)
         qs = qs.filter(tree_id=self.kwargs['pk'])
         qs = qs.order_by('-date_photos_taken', '-album_id')

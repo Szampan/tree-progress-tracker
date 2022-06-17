@@ -1,4 +1,3 @@
-# from tokenize import blank_re
 from email.policy import default
 import uuid
 import pathlib
@@ -66,7 +65,6 @@ class Entry(models.Model):
     comment = models.TextField(max_length=1000, blank=True, null=True)
     # image = models.ImageField(upload_to=tree_images_upload_handler, blank=True)
     
-
     class Meta:
         verbose_name_plural = 'entries'
 
@@ -74,28 +72,11 @@ class Entry(models.Model):
         date = str(self.date_photos_taken.strftime('%Y-%m-%d')) if self.date_photos_taken else ''
         return f'{self.tree.name}: ' + date
 
-    # def save(self, *args, **kwargs):
-    #     if not self.album:
-    #         self.album = ImageAlbum.objects.create()
-
-    #         lol('◘◘◘ Entry album:')
-    #         lol(self.album)
-    #     super().save(*args, **kwargs)
-
 
 
 # def get_image_filename(filename):   
 #     # slug = slugify()
 #     return f"post_images/{filename}"
-
-class Images(models.Model):     # later: delete. Image is new model instead of Images.    
-    entry = models.ForeignKey(Entry, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=user_directory_path, blank=True, verbose_name='Image test')  #null=True ?
-    default = models.BooleanField(default=False)    
-    # default_for_tree = models.BooleanField(default=False)  # Later ?
-
-    class Meta:
-        verbose_name_plural = 'imagessss_old'
 
 
 

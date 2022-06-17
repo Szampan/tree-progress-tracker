@@ -1,5 +1,5 @@
 from django import forms
-from .models import Tree, Entry, ImageAlbum, Image, Images
+from .models import Tree, Entry, ImageAlbum, Image 
 
 class TreeForm(forms.ModelForm):
     class Meta:
@@ -32,33 +32,3 @@ class FullEntryForm(EntryForm):
         # model = ImageAlbum   # tego nie było / old
         model = Image   # new
         fields = EntryForm.Meta.fields + ['images',]
-
-
-
-
-    #     # fields = ['images']
-
-    # Save all images to the album
-    # def save(self, commit=True, *args, **kwargs):
-    #     album = super().save(commit=False)
-    #     album.user = self.request.user
-    #     album.save()
-    #     for image in self.cleaned_data['images']:
-    #         album.images.create(image=image)
-    #     return album
-
-
-    
-
-
-
-
-# from django import forms
-# from .models import Tree, Entry, Images
-
-
-# class ImageForm(forms.ModelForm):
-#     image = forms.ImageField(label="Image")
-#     class Meta:
-#         model = Images
-#         fields = ('image', )
