@@ -10,7 +10,7 @@
     <div>
         <p>TREE DETAILS HERE</p>
         <hr>
-        <!-- <a href="{% url 'trees:new_entry' %}">(DELETE IT) Add new photos!</a> -->
+       
         <p>FORM HERE (with date of photo)</p>
         <form action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -26,20 +26,27 @@
                     <a href="{% url 'trees:entry' entry.pk %}">
                         <h4>{{ entry }}</h4>
                         {% if entry.album.default %}
-                            <img src="{{ entry.album.default.image.url }}" alt="{{ entry.album.default.image.name }}" width="200" zheight="200">
+                        <img src="{{ entry.album.default.image.url }}" alt="{{ entry.album.default.image.name }}" width="200" zheight="200">
                         {% endif %}
+                    </a>
+                    <br>
+                    <small>
+                        <a href="{% url 'trees:edit_entry' entry.pk %}">(Edit)</a>
+                        <a href="{% url 'trees:delete_entry' entry.pk %}">(Delete)</a>
+                        <a href="{% url 'trees:delete_image_album' entry.album.id %}">(Delete album)</a>
+                    </small>
                         
                         <!-- {% if tree.image %}
                             <img src="{{ tree.image.url }}" alt="{{ tree.name }}" width="200" zheight="200">
                             {% endif %} -->
                             
-                    </a>
                     {# <!-- <p>{% url 'trees:entry' album.pk %} </p> --> #}
                     <p class="lead">comment: {{ entry.comment }}</p>
                     <small  class="text-muted">
                         <p>entry id: {{ entry.id }}</p>
                         <p>name: {{ entry.tree }}</p>
                         <p>album: {{ entry.album }}</p>
+                        <p>album id: {{ entry.album.id }}</p>
                     </small>
                 </li>
             {% endfor %}

@@ -1,0 +1,21 @@
+{% extends "trees/base.html" %}
+{% block page_header %}
+    <div>
+        <h2>Delete album  number {{ imagealbum.id }}</h2>
+        {{ request }}
+
+    </div>
+        
+    {% endblock page_header %}  
+
+{% block content %}
+    <p>tree number: {{ imagealbum.tree_id }} </p>
+    <div>
+        <form action="{% url 'trees:delete_image_album' imagealbum.id %}" method="post">
+            {% csrf_token %}
+            <strong>Are you sure?</strong>
+            <button name="submit">Delete album!</button>
+        </form> 
+
+    </div>
+{% endblock content %}

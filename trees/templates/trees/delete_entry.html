@@ -1,0 +1,20 @@
+{% extends "trees/base.html" %}
+{% block page_header %}
+    <div>
+        <h2>Delete entry from  {{entry.date_photos_taken}}</h2>
+        <!-- {{ request }} -->
+
+    </div>
+        
+    {% endblock page_header %}  
+
+{% block content %}
+    <div>
+        <form action="{% url 'trees:delete_entry' entry.pk %}" method="post">
+            {% csrf_token %}
+            <strong>Are you sure?</strong>
+            <button name="submit">Delete entry!</button>
+        </form>
+
+    </div>
+{% endblock content %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Tree, Entry, Image, ImageAlbum  #, Images
+from .models import Tree, Entry, Image, ImageAlbum 
 
 class EntryInline(admin.TabularInline):
     model = Entry

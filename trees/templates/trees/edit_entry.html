@@ -1,0 +1,25 @@
+{% extends "trees/base.html" %}
+{% block page_header %}
+    <div>
+        <h2>Edit entry:  {{entry.date_photos_taken}}</h2>
+        <!-- {{ request }} -->
+
+    </div>
+        
+    {% endblock page_header %}  
+
+{% block content %}
+    <div>
+        <form action="{% url 'trees:edit_entry' entry.pk %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <strong>Are you sure?</strong>
+            <button name="submit">Save entry</button>
+        </form>
+        <hr>
+        <h2>ADD FUNCTION TO DELETE AND UPLOAD NEW PHOTOS</h2>
+        <h3>(After changing database structyre)</h3>
+
+    </div>
+{% endblock content %}
