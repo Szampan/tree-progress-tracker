@@ -31,6 +31,7 @@ class Tree(models.Model):
     # date_planted = models.DateField(blank=True)                   #?
     image = models.ImageField(upload_to=tree_images_upload_handler, blank=True)    # later: upload photo or choose among images assigned do entries
     is_bonsai = models.BooleanField(default=False)
+    rating = models.FloatField()
 
     # tags: bonsai, decidous, conifer, indoor, outdoor
     # location = models.CharField(max_length=200)

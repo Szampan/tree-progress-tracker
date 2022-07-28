@@ -8,12 +8,17 @@ class EntryInline(admin.TabularInline):
 class TreeAdmin(admin.ModelAdmin):
     inlines = [EntryInline]
 
+
 class ImageInline(admin.TabularInline):
     model = Image
     extra = 1
 
 class ImageAlbumAdmin(admin.ModelAdmin):
     inlines = [EntryInline, ImageInline]
+
+
+
+
 
 admin.site.register(Tree, TreeAdmin)
 admin.site.register(Entry)
