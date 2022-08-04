@@ -44,6 +44,7 @@ class UserTrees(ListView):
     def get_queryset(self, *args, **kwargs):
         qs = super(UserTrees, self).get_queryset(*args, **kwargs)
         qs = qs.filter(owner_id=self.kwargs['pk'])
+        qs = qs.order_by('-date_added')
         # qs = qs.filter(user=self.request.user)
         return qs
 
@@ -58,6 +59,11 @@ class AllEntries(ListView):
     model = Entry
     template_name = 'trees/all_entries.html'
     context_object_name = 'all_entries'   
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(AllEntries, self).get_queryset(*args, **kwargs)
+        qs = qs.order_by('-date_added')
+        return qs
 
 
 class TreeDislpayEntries(ListView):
@@ -74,7 +80,7 @@ class TreeDislpayEntries(ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['tree_name'] = Tree.objects.get(pk=self.kwargs['pk'])   # zamiast tego można coś w stylu post.title w templacie
+        context['tree'] = Tree.objects.get(pk=self.kwargs['pk'])   # zamiast tego można coś w stylu post.title w templacie
         # context['form'] = EntryForm()   # Old
         context['form'] = FullEntryForm()   # New
         return context
@@ -145,7 +151,14 @@ class TreeDeleteImageAlbum(DeleteView):  # Add mixin to delete entry directly fr
 
 class TreeView(View):
 
+    # def get_context_data(self, *args, **kwargs):
+    #     lol('get context data')
+    #     context = super().get_context_data(*args, **kwargs)
+    #     context['tree'] = Tree.objects.get(pk=self.kwargs['pk'])
+    #     return context
+
     def get(self, request, *args, **kwargs):
+        lol('get')
         view = TreeDislpayEntries.as_view()
         return view(request, *args, **kwargs)
 
@@ -163,14 +176,24 @@ class EntryView(DetailView):
 class NewTree(FormView):
     form_class = TreeForm
     template_name = 'trees/new_tree.html'
-    success_url = reverse_lazy('trees:index')
+
+    def get_success_url(self) -> str:
+        return reverse('trees:tree', kwargs={'pk': self.new_tree.pk})
 
     def form_valid(self, form):
-        new_tree = form.save(commit=False)
-        new_tree.owner = self.request.user
-        new_tree.save()
+        self.new_tree = form.save(commit=False)
+        self.new_tree.owner = self.request.user
+        self.new_tree.save()
 
         return super().form_valid(form)
+
+class EditTree(UpdateView):
+    model = Tree
+    form_class = TreeForm
+    template_name = 'trees/edit_tree.html'
+
+    def get_success_url(self) -> str:
+        return reverse('trees:tree', kwargs={'pk': self.object.pk})
 
 
 # @login_required

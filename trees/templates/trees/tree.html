@@ -1,17 +1,45 @@
 {% extends "trees/base.html" %}
 {% block page_header %}
     <div>
-        <h1>{{ tree_name }} </h1>
+        <h1>{{ tree }} </h1>
     </div>
-        
+    
     {% endblock page_header %}  
-
-{% block content %}
+    
+    {% block content %}
     <div>
-        <p>TREE DETAILS HERE</p>
-        <hr>
+        <div>
+            <p>name: {{ tree }} </p>
+            <p>owner: {{ tree.owner }} </p>
+            <p>specie: {{ tree.specie }} 
+                {% if tree.specie_latin %}
+                <span class="font-italic">({{ tree.specie_latin}})</span> </p>
+                {% endif %}
+            {% if tree.date_planted %}
+            <p>date planted: {{ tree.date_planted }} </p>
+            {% endif %}
+            {% if tree.description %}
+                <p>description: {{ tree.description }} </p>
+            {% endif %}
+            {% if tree.owner == request.user %}
+                <p><small><a href="{% url 'trees:edit_tree' tree.pk %}">edit tree</a></small></p>
+                    
+            {% endif %}
+            <hr>
+        </div>
+        <div>
+            <h2>Default photo</h2>
+            {% if tree.image %}
+            <img src="{{ tree.image.url }}" alt="{{ tree.image.name }}" class="img-fluid">
+            {% else %}
+            <p>No default photo</p>
+            {% endif %}
+            <hr>
+        </div>
+            
+        
        
-        <p>FORM HERE (with date of photo)</p>
+        <h3>Upload new photos!</h3>
         <form action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
