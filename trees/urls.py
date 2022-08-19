@@ -18,6 +18,7 @@ urlpatterns = [
 
     path('tree/<int:pk>/', views.TreeView.as_view(), name='tree'),  # old
     path('tree/<int:pk>/edit_tree', views.EditTree.as_view(), name='edit_tree'),
+    path('tree/<int:pk>/delete_tree', views.DeleteTree.as_view(), name='delete_tree'),
     # path('tree/<int:pk>/', views.TreeDislpayEntries.as_view(), name='tree'),   # new
 
     # path('tree/<int:tree_id>/', views.tree, name='tree'),

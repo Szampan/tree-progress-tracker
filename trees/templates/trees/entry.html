@@ -15,7 +15,6 @@
         <p>default photo: {{ entry.album.default.image }}    </p>
         <img src="{{ entry.album.default.image.url }}" alt="">
         <div>
-            <p>Iterowanie po zawartości albumu przypisanego do entry. Album musi to jakoś umożliwiać. Znaleźć wbudowaną funkcję</p>
             <ul>
                 {% for photo in entry.album.show_images %}
                     <li>

@@ -1,9 +1,5 @@
-from email.policy import default
-from urllib import request
-from django.shortcuts import render
-
-##
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView, SingleObjectMixin
@@ -129,6 +125,7 @@ class TreeEditEntry(UpdateView):
     def get_success_url(self):
         tree = self.object.tree
         return reverse('trees:tree', kwargs={'pk': tree.pk})
+
     
 class TreeDeleteEntry(DeleteView):  # Add mixin to delete entry directly from a tree page
     model = Entry
@@ -151,12 +148,6 @@ class TreeDeleteImageAlbum(DeleteView):  # Add mixin to delete entry directly fr
 
 class TreeView(View):
 
-    # def get_context_data(self, *args, **kwargs):
-    #     lol('get context data')
-    #     context = super().get_context_data(*args, **kwargs)
-    #     context['tree'] = Tree.objects.get(pk=self.kwargs['pk'])
-    #     return context
-
     def get(self, request, *args, **kwargs):
         lol('get')
         view = TreeDislpayEntries.as_view()
@@ -172,7 +163,7 @@ class EntryView(DetailView):
     template_name = 'trees/entry.html'
     context_object_name = 'entry'
 
-
+@method_decorator(login_required, name='dispatch')
 class NewTree(FormView):
     form_class = TreeForm
     template_name = 'trees/new_tree.html'
@@ -195,6 +186,20 @@ class EditTree(UpdateView):
     def get_success_url(self) -> str:
         return reverse('trees:tree', kwargs={'pk': self.object.pk})
 
+class DeleteTree(DeleteView):
+    model = Tree
+    template_name = 'trees/delete_tree.html'
+    success_url = reverse_lazy('trees:index')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['tree'] = self.get_object()
+        return context
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
 
 # @login_required
 # def new_entry(request):

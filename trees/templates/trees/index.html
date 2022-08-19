@@ -10,9 +10,11 @@
 {% block content %}
     <div>
         <p>Here will be a list with thumbnails of all trees of all users (which contain main image)</p>
-        <a href="{% url 'trees:new_tree' %}">
-            Add tree
-        </a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'trees:new_tree' %}"> Add tree </a>
+        {% endif %}
+
+
         <ul>
             {% for tree in trees %}
                 {% if tree.image %}

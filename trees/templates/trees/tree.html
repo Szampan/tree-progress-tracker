@@ -2,6 +2,12 @@
 {% block page_header %}
     <div>
         <h1>{{ tree }} </h1>
+        {% if tree.owner == request.user %}
+            <small>
+                <a href="{% url 'trees:edit_tree' tree.pk %}">(Edit tree)</a>
+                <a href="{% url 'trees:delete_tree' tree.pk %}">(Delete tree)</a>
+            </small>
+        {% endif %}
     </div>
     
     {% endblock page_header %}  
@@ -20,10 +26,6 @@
             {% endif %}
             {% if tree.description %}
                 <p>description: {{ tree.description }} </p>
-            {% endif %}
-            {% if tree.owner == request.user %}
-                <p><small><a href="{% url 'trees:edit_tree' tree.pk %}">edit tree</a></small></p>
-                    
             {% endif %}
             <hr>
         </div>
@@ -51,18 +53,19 @@
         <ul>
             {% for entry in tree_entries %}
                 <li>
-                    <a href="{% url 'trees:entry' entry.pk %}">
-                        <h4>{{ entry }}</h4>
-                        {% if entry.album.default %}
-                        <img src="{{ entry.album.default.image.url }}" alt="{{ entry.album.default.image.name }}" width="200" zheight="200">
-                        {% endif %}
-                    </a>
-                    <br>
+                    <a href="{% url 'trees:entry' entry.pk %}"> <h4>{{ entry }}</h4> </a>
                     <small>
-                        <a href="{% url 'trees:edit_entry' entry.pk %}">(Edit)</a>
-                        <a href="{% url 'trees:delete_entry' entry.pk %}">(Delete)</a>
-                        <a href="{% url 'trees:delete_image_album' entry.album.id %}">(Delete album)</a>
+                        <a href="{% url 'trees:edit_entry' entry.pk %}">(Edit entry)</a>
+                        <a href="{% url 'trees:delete_entry' entry.pk %}">(Delete entry)</a>
+                        <!-- <a href="{% url 'trees:delete_image_album' entry.album.id %}">(Delete album)</a> -->
                     </small>
+                    <br>
+                    
+                    {% if entry.album.default %}
+                        <a href="{% url 'trees:entry' entry.pk %}">
+                            <img src="{{ entry.album.default.image.url }}" alt="{{ entry.album.default.image.name }}" width="300" zheight="200">
+                        </a>
+                    {% endif %}
                         
                         <!-- {% if tree.image %}
                             <img src="{{ tree.image.url }}" alt="{{ tree.name }}" width="200" zheight="200">
