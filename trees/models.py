@@ -17,7 +17,7 @@ def tree_images_upload_handler(instance, filename):             # later: make it
     new_fname = str(uuid.uuid1())   # uuid1 -> uuid + timestamp
     return f'images/user_{instance.owner.id}/{new_fname}{fpath.suffix}'
 
-def album_path_handler(instance, filename):
+def album_path_handler(instance, filename):                 # do usunięcia albo przerobienia
     return f'images/album_{instance.album.id}/{filename}'
 
 

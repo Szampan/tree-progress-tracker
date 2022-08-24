@@ -117,7 +117,7 @@ class TreeAddEntry(SingleObjectMixin, FormView):
         return reverse('trees:tree', kwargs={'pk': tree.pk})
 
 
-class TreeEditEntry(UpdateView):
+class TreeEditEntry(OwnerRequirementMixin, UpdateView):
     model = Entry
     form_class = EntryForm
     template_name = 'trees/edit_entry.html'
@@ -127,7 +127,7 @@ class TreeEditEntry(UpdateView):
         return reverse('trees:tree', kwargs={'pk': tree.pk})
 
     
-class TreeDeleteEntry(DeleteView):  # Add mixin to delete entry directly from a tree page
+class TreeDeleteEntry(OwnerRequirementMixin, DeleteView):  # Add mixin to delete entry directly from a tree page
     model = Entry
     template_name = 'trees/delete_entry.html'  
 
@@ -175,10 +175,10 @@ class NewTree(FormView):
         self.new_tree = form.save(commit=False)
         self.new_tree.owner = self.request.user
         self.new_tree.save()
-
         return super().form_valid(form)
 
-class EditTree(UpdateView):
+@method_decorator(login_required, name='dispatch')
+class EditTree(OwnerRequirementMixin, UpdateView):
     model = Tree
     form_class = TreeForm
     template_name = 'trees/edit_tree.html'
@@ -186,7 +186,9 @@ class EditTree(UpdateView):
     def get_success_url(self) -> str:
         return reverse('trees:tree', kwargs={'pk': self.object.pk})
 
-class DeleteTree(DeleteView):
+
+@method_decorator(login_required, name='dispatch')
+class DeleteTree(OwnerRequirementMixin, DeleteView):
     model = Tree
     template_name = 'trees/delete_tree.html'
     success_url = reverse_lazy('trees:index')
@@ -200,6 +202,8 @@ class DeleteTree(DeleteView):
         self.object = self.get_object()
         self.object.delete()
         return HttpResponseRedirect(self.get_success_url())
+
+
 
 # @login_required
 # def new_entry(request):

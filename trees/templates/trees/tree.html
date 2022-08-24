@@ -41,7 +41,7 @@
             
         
        
-        <h3>Upload new photos!</h3>
+        <h3>Update tree with new photos!</h3>
         <form action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
@@ -54,11 +54,13 @@
             {% for entry in tree_entries %}
                 <li>
                     <a href="{% url 'trees:entry' entry.pk %}"> <h4>{{ entry }}</h4> </a>
-                    <small>
-                        <a href="{% url 'trees:edit_entry' entry.pk %}">(Edit entry)</a>
-                        <a href="{% url 'trees:delete_entry' entry.pk %}">(Delete entry)</a>
-                        <!-- <a href="{% url 'trees:delete_image_album' entry.album.id %}">(Delete album)</a> -->
-                    </small>
+                    {% if tree.owner == request.user %}
+                        <small>
+                            <a href="{% url 'trees:edit_entry' entry.pk %}">(Edit entry)</a>
+                            <a href="{% url 'trees:delete_entry' entry.pk %}">(Delete entry)</a>
+                            <!-- <a href="{% url 'trees:delete_image_album' entry.album.id %}">(Delete album)</a> -->
+                        </small>
+                    {% endif %}
                     <br>
                     
                     {% if entry.album.default %}

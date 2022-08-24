@@ -4,7 +4,7 @@ from .models import Tree, Entry, ImageAlbum, Image
 class TreeForm(forms.ModelForm):
     class Meta:
         model = Tree
-        fields = ['name', 'specie', 'specie_latin', 'description', 'is_bonsai']
+        fields = ['name', 'specie', 'specie_latin', 'description', 'is_bonsai', 'image']
 
 
 class EntryForm(forms.ModelForm):

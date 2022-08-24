@@ -18,29 +18,17 @@
 
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a href="{% url 'trees:all_entries' %}" class="nav-link">All entries</a>
-                </li>
+                <li class="nav-item"><a href="{% url 'trees:all_entries' %}" class="nav-link">All entries</a></li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <span class="navbar-text">Hello, {{ user.username }}.</span>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'trees:user_trees' user.pk %}" class="nav-link">My trees</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'users:logout' %}" class="nav-link">Log out</a>
-                    </li>
+                    <li class="navbar-text mx-2"><span class="navbar-text">Hello, {{ user.username }}.</span></li>
+                    <li class="nav-item"><a href="{% url 'trees:user_trees' user.pk %}" class="nav-link">My trees</a></li>
+                    <li class="nav-item"><a href="{% url 'users:logout' %}" class="nav-link">Log out</a></li>
                     
                 {% else %}
-                    <li class="nav-item">
-                        <a href="{% url 'users:signup' %}" class="nav-link">Sign up</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'users:login' %}" class="nav-link">Log in</a>
-                    </li>
+                    <li class="nav-item"><a href="{% url 'users:signup' %}" class="nav-link">Sign up</a></li>
+                    <li class="nav-item"><a href="{% url 'users:login' %}" class="nav-link">Log in</a></li>
                 {% endif %}
                 
             </ul>
