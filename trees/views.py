@@ -16,8 +16,9 @@ from django.http import HttpResponseRedirect
 # from .forms import TreeForm, EntryForm, ImageForm
 ##
 from .models import Tree, Entry, Image, ImageAlbum
-from .forms import TreeForm, EntryForm, FullEntryForm
+from .forms import TreeForm, EntryForm, FullEntryForm, TestTreeForm
 
+from bootstrap_modal_forms.generic import BSModalCreateView
 from tools import *
 
 
@@ -149,7 +150,7 @@ class TreeDeleteImageAlbum(DeleteView):  # Add mixin to delete entry directly fr
 class TreeView(View):
 
     def get(self, request, *args, **kwargs):
-        lol('get')
+        # lol('get')
         view = TreeDislpayEntries.as_view()
         return view(request, *args, **kwargs)
 
@@ -172,10 +173,31 @@ class NewTree(FormView):
         return reverse('trees:tree', kwargs={'pk': self.new_tree.pk})
 
     def form_valid(self, form):
+        lol('NewTree')
         self.new_tree = form.save(commit=False)
         self.new_tree.owner = self.request.user
         self.new_tree.save()
         return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class NewTestTree(BSModalCreateView):
+# class NewTestTree(FormView):
+    template_name = 'trees/new_test_tree.html'
+    form_class = TestTreeForm
+    success_message = 'Success Tree was created.'
+
+    def get_success_url(self) -> str:
+        return reverse_lazy('trees:tree', kwargs={'pk': self.new_tree.pk})
+
+    def form_valid(self, form):
+        lol('New Test Tree')
+        self.new_tree = form.save(commit=False)
+        self.new_tree.owner = self.request.user
+        self.new_tree.save()
+        return super().form_valid(form)
+
+
+    
 
 @method_decorator(login_required, name='dispatch')
 class EditTree(OwnerRequirementMixin, UpdateView):
@@ -202,6 +224,25 @@ class DeleteTree(OwnerRequirementMixin, DeleteView):
         self.object = self.get_object()
         self.object.delete()
         return HttpResponseRedirect(self.get_success_url())
+
+# TEMPORARY
+
+# from django.contrib.messages.views import SuccessMessageMixin
+# from django.urls import reverse_lazy
+# from django.views import generic
+# from bootstrap_modal_forms.mixins import PassRequestMixin
+# from .forms import CustomUserCreationForm
+
+# class SignUpView(PassRequestMixin, SuccessMessageMixin, generic.CreateView):
+#     form_class = CustomUserCreationForm
+#     template_name = 'trees/modals/test_signup.html'
+#     success_message = 'Success: Sign up succeeded. You can now Log in.'
+#     success_url = reverse_lazy('index')
+
+
+
+
+
 
 
 

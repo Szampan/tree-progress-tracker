@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     # My apps
     'trees',
     'users',
+    'bootstrap_modal_forms',
+    'widget_tweaks',
 
 
     # Default

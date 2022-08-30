@@ -25,6 +25,10 @@ urlpatterns = [
     # path('new_entry/', views.new_entry, name='new_entry'),
     # path('entry/<int:entry_id>/', views.entry, name='entry'),
 
+    path('new_test_tree/', views.NewTestTree.as_view(), name='new_test_tree'),
+    # temporary, test:
+    # path('signup/', views.SignUpView.as_view(), name='signup'),
+
 ]
 
 if settings.DEBUG:          # if not needed?

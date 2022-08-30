@@ -1,8 +1,18 @@
 from django import forms
 from .models import Tree, Entry, ImageAlbum, Image 
+from bootstrap_modal_forms.forms import BSModalModelForm
+
+from tools import lol
+
+class TestTreeForm(BSModalModelForm):
+    class Meta:
+        model = Tree
+        fields = ['name', 'specie', 'specie_latin', 'description', 'is_bonsai', 'image']
+
 
 class TreeForm(forms.ModelForm):
     class Meta:
+        pass
         model = Tree
         fields = ['name', 'specie', 'specie_latin', 'description', 'is_bonsai', 'image']
 
@@ -32,3 +42,17 @@ class FullEntryForm(EntryForm):
         # model = ImageAlbum   # tego nie było / old
         model = Image   # new
         fields = EntryForm.Meta.fields + ['images',]
+
+
+
+# TEMPORARY
+
+# from django.contrib.auth.forms import UserCreationForm
+# from django.contrib.auth.models import User
+# from bootstrap_modal_forms.mixins import PopRequestMixin, CreateUpdateAjaxMixin
+
+
+# class CustomUserCreationForm(CreateUpdateAjaxMixin, PopRequestMixin, UserCreationForm):
+#     class Meta:
+#         model = User
+#         fields = ['username', 'password1', 'password2']

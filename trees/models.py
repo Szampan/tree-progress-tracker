@@ -41,7 +41,7 @@ class Tree(models.Model):
     def __str__(self):
         return self.name
     
-class ImageAlbum(models.Model):     #ImageAlbom powinien być przypięty do Entry a nie odwrotnie?
+class ImageAlbum(models.Model):     #ImageAlbum powinien być przypięty do Entry a nie odwrotnie?
     def default(self):
         return self.images.filter(default=True).first()
 
